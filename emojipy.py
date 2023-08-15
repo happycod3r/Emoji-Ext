@@ -37,6 +37,7 @@ class EmojiPy(ctk.CTk):
 
         self.EMOJIS = []
         self.EMOJI_NAMES = None
+        self.EMOJI_UNICODE_VALUES = []
 
         self.width = 500
         self.height = 550
@@ -47,22 +48,22 @@ class EmojiPy(ctk.CTk):
         
         bgl1_color = "#1B0D2C"
         
-        self.bg_image = ctk.CTkImage(Image.open("./res/bg1.png"), size=(self.width, self.height))
+        self.bg_image = ctk.CTkImage(Image.open("./res/bg2.webp"), size=(self.width, self.height))
         
         self.bg_image_label = ctk.CTkLabel(self, text="", image=self.bg_image)
         self.bg_image_label.grid(row=0, column=0)
         
-        self.app_title = ctk.CTkLabel(self, width=self.width, text="EmojiPy", font=ctk.CTkFont("Segoi UI", 25, weight='bold'), bg_color="transparent", fg_color=f"{bgl1_color}", corner_radius=0)
-        self.app_title.grid(row=0, column=0, padx=(0, 0), pady=(20, 20), ipady=10, sticky="new")
+        self.app_title = ctk.CTkLabel(self, width=self.width, height=50, text="EmojiPy", font=ctk.CTkFont("Segoi UI", 25, weight='bold'), bg_color="transparent", fg_color=f"{bgl1_color}", text_color="#FCCB55", corner_radius=0)
+        self.app_title.grid(row=0, column=0, padx=(0, 0), pady=(0, 20), ipady=10, sticky="new")
         self.app_title.grid_rowconfigure(0, weight=1)
 
-        self.emoji_frame = ctk.CTkScrollableFrame(self, width=self.width, fg_color=f"{bgl1_color}", corner_radius=6)
-        self.emoji_frame.grid(row=0, column=0, padx=30, pady=(80, 10), sticky="nsew")
+        self.emoji_frame = ctk.CTkScrollableFrame(self, width=self.width, fg_color=f"{bgl1_color}", corner_radius=10)
+        self.emoji_frame.grid(row=0, column=0, padx=40, pady=(80, 10), sticky="nsew")
         self.emoji_frame.grid_rowconfigure(1, weight=1)
         
-        print(self.convert_emoji_to_unicode("😣😖"))
         self.set_emoji_list()
-        self.get_emoji_names_from_db()
+        self.set_emoji_names()
+        self.set_emoji_unicode_values()
         self.populate_gui()
         
     def convert_emoji_to_unicode(self, emojis: str | list[str]) -> (str | list[str]):
@@ -73,9 +74,11 @@ class EmojiPy(ctk.CTk):
         unicode_strings = []
         for codepoint in unicode_values:
             unicode_strings.append(f"U+{codepoint:04X}")        
-        formatted_values = " ".join(unicode_strings)
-        return formatted_values
+        return unicode_strings
     
+    def set_emoji_unicode_values(self) -> list[str]:
+        self. EMOJI_UNICODE_VALUES = self.convert_emoji_to_unicode(self.EMOJIS)
+        
     def populate_gui(self) -> None:
         """
         Loads and populates the GUI with the emojis after they have 
@@ -85,7 +88,7 @@ class EmojiPy(ctk.CTk):
         del self.EMOJIS[-5:] # temporary
         for i in range(len(self.EMOJIS)):
             if len(self.EMOJIS[i]) != 0:
-                emoji_list_item = ctk.CTkLabel(self.emoji_frame)
+                emoji_list_item = ctk.CTkButton(self.emoji_frame, fg_color="#1B0D2C", text_color="#FCCB55", width=40)
                 emoji_list_item.configure(   
                     text=f"{self.EMOJIS[i]}", 
                     anchor="center",
@@ -102,11 +105,30 @@ class EmojiPy(ctk.CTk):
                     sticky="ew"
                 )
                 emoji_list_item.grid_rowconfigure(i, weight=0) 
+                
+                emoji_item_unicode = ctk.CTkLabel(self.emoji_frame, text_color="#CC0F04")
+                emoji_item_unicode.configure(
+                    text=f"{self.EMOJI_UNICODE_VALUES[i]}",    
+                    font=ctk.CTkFont("Segoi UI", size=16, weight="bold"), 
+                    width=40,
+                    corner_radius=0,
+                    anchor="w",
+                    state="normal"
+                )
+                emoji_item_unicode.grid(
+                    row=i, 
+                    column=1, 
+                    padx=(0, 0), 
+                    pady=(0, 2),
+                    ipady=2, 
+                    sticky="nsew"
+                )
+                emoji_item_unicode.grid_rowconfigure(i, weight=0)
 
-                emoji_item_name = ctk.CTkButton(self.emoji_frame, fg_color="#FCCB55")
+                emoji_item_name = ctk.CTkLabel(self.emoji_frame)
                 emoji_item_name.configure(
                     text=f"{self.EMOJI_NAMES[i]}",    
-                    font=ctk.CTkFont("Segoi UI", size=16), 
+                    font=ctk.CTkFont("Segoi UI", size=16, weight="bold"), 
                     width=self.width,
                     corner_radius=0,
                     anchor="w",
@@ -114,7 +136,7 @@ class EmojiPy(ctk.CTk):
                 )
                 emoji_item_name.grid(
                     row=i, 
-                    column=1, 
+                    column=2, 
                     padx=(0, 0), 
                     pady=(0, 2),
                     ipadx=2,
@@ -123,6 +145,22 @@ class EmojiPy(ctk.CTk):
                 )
                 emoji_item_name.grid_rowconfigure(i, weight=0)
             
+    def get_emojis_from_db(self) -> str:
+        """
+        Retrieves the short hand emojis from the DEMOJIZED database, emojizes them and 
+        returns the emoji string returned by emoji.emojize().
+        """
+        try:
+            with open("DEMOJIZED.db", "r") as db:
+                content = db.read()
+                db.close()
+                emojis = emoji.emojize(content)
+                return emojis
+        except FileNotFoundError as e:
+            print(repr(e))
+        except IOError as e:
+            print(repr(e))
+
     def set_emoji_list(self) -> None:
         """
         Gets the emojis retrieved from the db, checks their validity and 
@@ -133,7 +171,7 @@ class EmojiPy(ctk.CTk):
             if emoji.is_emoji(item):
                 self.EMOJIS.append(item)
     
-    def get_emoji_names_from_db(self) -> list[str]:
+    def get_emoji_names(self) -> list[str]:
         """
         Instead of manually writing out all the names I figured since
         the emoji.demojize() function stores the emojis using the emoji
@@ -150,28 +188,15 @@ class EmojiPy(ctk.CTk):
                 actual_names = []
                 for name in names:
                     if name != '':
-                        actual_names.append(name)    
-                self.EMOJI_NAMES = actual_names
+                        actual_names.append(name)
+                return actual_names    
         except FileNotFoundError as e:
             print(repr(e))
         except IOError as e:
             print(repr(e))     
 
-    def get_emojis_from_db(self) -> str:
-        """
-        Retrieves the short hand emojis from the DEMOJIZED database, emojizes them and 
-        returns the emoji string returned by emoji.emojize().
-        """
-        try:
-            with open("DEMOJIZED.db", "r") as db:
-                content = db.read()
-                db.close()
-                emojis = emoji.emojize(content)
-                return emojis
-        except FileNotFoundError as e:
-            print(repr(e))
-        except IOError as e:
-            print(repr(e))
+    def set_emoji_names(self):
+        self.EMOJI_NAMES = self.get_emoji_names()
 
     def add_emojis_to_db(self, emojis: list[str]):
         """
