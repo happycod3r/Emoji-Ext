@@ -8,8 +8,8 @@ Author: Paul McCarthy
 Author-email: paulmccarthy676@gmail.com
 Original Author: Taehoon Kim, Kevin Wurster
 Original Author-email: carpedm20@gmail.com
-Original License: New BSD
-Keywords: emoji
+License: New BSD
+Keywords: emojix, emoji
 Classifier: Development Status :: 5 - Production/Stable
 Classifier: Intended Audience :: Developers
 Classifier: Intended Audience :: Information Technology
@@ -31,7 +31,7 @@ Classifier: Topic :: Software Development :: Libraries :: Python Modules
 Classifier: Typing :: Typed
 Requires-Python: >=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*
 Provides-Extra: dev
-License-File: LICENSE.txt
+License-File: EMOJIX_LICENSE.txt, EMOJI_LICENSE.txt
 
 Emoji
 =====
