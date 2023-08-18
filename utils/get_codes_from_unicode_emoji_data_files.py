@@ -582,23 +582,33 @@ if __name__ == "__main__":
 
         # Print dict of dicts
         alias = ''
+        
         if len(aliases) > 0:
             alias_list_str = ", ".join([f"':{a}:'" for a in aliases])
             alias = ",\n        'alias': [%s]" % (alias_list_str, )
+        
         variant = ",\n        'variant': True" if 'variant' in v else ''
+        
         print(f"""    '{code}': {{  # {emj}
         'en': ':{v['en']}:',
         'status': {v["status"]},
         'E': {v["version"]:g}{alias}{variant}{language_str}
     }}""", end=",\n")
+        
         if v["status"] == "fully_qualified":
             f += 1
         elif v["status"] == "component":
             c += 1
-
+            
+    # Adding language info if any in the debug logging information.
+    langs = []
+    for key in languages.keys():
+        langs.append(key)
+    lang_string = str(langs).lstrip('[').rstrip(']')
     logging.debug(f" # Total count of emojis: {len(emojis)}")
     logging.debug(f" # fully_qualified: {f}")
-    logging.debug(f" # component: {c}\n")
+    logging.debug(f" # component: {c}")
+    logging.debug(f" # Languages: {lang_string}\n")
     logging.debug("\n".join(new_aliases))
 
     # Check if all aliases from GitHub API were used
