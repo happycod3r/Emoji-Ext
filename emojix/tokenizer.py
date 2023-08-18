@@ -14,9 +14,9 @@ __all__ = [
     'tokenize', 'filter_tokens',
 ]
 
+_ZWJ_CODEPOINT='U+200D' # Unicode code point for the Zero Width Joiner.
 _ZWJ = '\u200D'
 _SEARCH_TREE = None
-
 
 class EmojiMatch:
     """
@@ -81,7 +81,6 @@ class EmojiMatch:
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.emoji}, {self.start}:{self.end})'
 
-
 class EmojiMatchZWJ(EmojiMatch):
     """
     Represents a match of multiple emoji in a string that were joined by
@@ -94,13 +93,12 @@ class EmojiMatchZWJ(EmojiMatch):
 
         self.emojis = []
         """List of sub emoji as EmojiMatch objects"""
-
-        i = match.start
+        index = match.start
         for e in match.emoji.split(_ZWJ):
-            m = EmojiMatch(
-                e, i, i+len(e), unicode_codes.EMOJI_DATA.get(e, None))
-            self.emojis.append(m)
-            i += len(e) + 1
+            _match = EmojiMatch(
+                e, index, index+len(e), unicode_codes.EMOJI_DATA.get(e, None))
+            self.emojis.append(_match)
+            index += len(e) + 1
 
     def join(self) -> str:
         """
@@ -117,7 +115,6 @@ class EmojiMatchZWJ(EmojiMatch):
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.join()}, {self.start}:{self.end})'
-
 
 class EmojiMatchZWJNonRGI(EmojiMatchZWJ):
     """
@@ -145,7 +142,6 @@ class EmojiMatchZWJNonRGI(EmojiMatchZWJ):
         self.emojis.append(next_emoji_match)
         self._update()
 
-
 class Token(NamedTuple):
     """
     A named tuple containing the matched string and its :class:`EmojiMatch` object if it is an emoji
@@ -153,7 +149,6 @@ class Token(NamedTuple):
     """
     chars: str
     value: Union[str, EmojiMatch]
-
 
 def tokenize(string, keep_zwj: bool) -> Iterator[Token]:
     """
@@ -234,7 +229,6 @@ def tokenize(string, keep_zwj: bool) -> Iterator[Token]:
 
     yield from result
 
-
 def filter_tokens(matches: Iterator[Token], emoji_only: bool, join_emoji: bool) -> Iterator[Token]:
     """
     Filters the output of `tokenize()`
@@ -296,7 +290,6 @@ def filter_tokens(matches: Iterator[Token], emoji_only: bool, join_emoji: bool) 
                 yield token
             accumulator = []
     yield from accumulator
-
 
 def get_search_tree() -> Dict[str, Any]:
     """

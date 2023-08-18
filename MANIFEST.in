@@ -1,8 +1,0 @@
-include EMOJIX_LICENSE.txt
-include EMOJI_LICENSE.txt
-include MANIFEST.in
-include README.rst
-include CHANGES.md
-include setup.cfg
-include setup.py
-recursive-include tests *.py
