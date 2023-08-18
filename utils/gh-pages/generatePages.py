@@ -6,8 +6,8 @@ import os
 import codecs
 import django.conf
 import django.template
-from htmlmin.minify import html_minify
-import htmlmin
+#prev: from htmlmin.minify import html_minify
+from htmlmin.main import minify #updated 8/18/23
 try:
     import emoji
 except ImportError:
@@ -97,7 +97,7 @@ with codecs.open(os.path.join(OUT_DIR, "all.html"), "w", encoding="utf-8") as f:
     html = template.render(data)
     if minify_enabled:
         print("Minify 'all.html' ...")
-        html = html_minify(html)
+        html = minify(html) #prev: html = html_minify(html)
     f.write(html)
     print(f"Wrote to {os.path.join(OUT_DIR, 'all.html')}")
 
@@ -111,7 +111,7 @@ with codecs.open(os.path.join(OUT_DIR, "index.html"), "w", encoding="utf-8") as 
     html = template.render(data)
     if minify_enabled:
         print("Minify 'index.html' ...")
-        html = html_minify(html)
+        html = minify(html) #prev: html = html_minify(html)
     f.write(html)
     print(f"Wrote to {os.path.join(OUT_DIR, 'index.html')}")
 
