@@ -9,15 +9,16 @@ Core components for emojix derived from https://www.github.com/carpedm20/emoji.
 import re
 import unicodedata
 from typing import Iterator
-
-from emoji import unicode_codes
-from emoji.tokenizer import Token, EmojiMatch, EmojiMatchZWJ, EmojiMatchZWJNonRGI, tokenize, filter_tokens
+from tokenizer import Token, EmojiMatch, EmojiMatchZWJ, EmojiMatchZWJNonRGI, tokenize, filter_tokens
+from emoji_data import data_dict, data_dict_retrieval
 
 __all__ = [
     'emojize', 'demojize', 'analyze', 'config',
     'emoji_list', 'distinct_emoji_list', 'emoji_count',
     'replace_emoji', 'is_emoji', 'purely_emoji', 'version',
     'Token', 'EmojiMatch', 'EmojiMatchZWJ', 'EmojiMatchZWJNonRGI',
+    #########################################
+    'category_exists',
 ]
 
 _DEFAULT_DELIMITER = ':'
@@ -59,6 +60,17 @@ class config():
     See :attr:`config.demojize_keep_zwj` for more information.
     """
 
+def category_exists(category: str) -> bool:
+    """
+    Returns True if the category exists otherwise returns False.
+    """
+    for key in data_dict.EMOJI_DATA.keys():
+        if category == data_dict.EMOJI_DATA[key]["category"]:
+            return True
+        elif category == data_dict.EMOJI_DATA[key]["subcategory"]:
+            return True
+        return False
+
 def emojize(
         string,
         delimiters=(_DEFAULT_DELIMITER, _DEFAULT_DELIMITER),
@@ -99,7 +111,7 @@ def emojize(
             handle_version('\\U0001F6EB', {
                 'en' : ':airplane_departure:',
                 'status' : fully_qualified,
-                'E' : 1,
+                'e' : 1,
                 'alias' : [':flight_departure:'],
                 'de': ':abflug:',
                 'es': ':avión_despegando:',
@@ -111,9 +123,9 @@ def emojize(
     """
 
     if language == 'alias':
-        language_pack = unicode_codes.get_aliases_unicode_dict()
+        language_pack = data_dict_retrieval.get_emoji_aliases_data()
     else:
-        language_pack = unicode_codes.get_emoji_unicode_dict(language)
+        language_pack = data_dict_retrieval.get_emoji_data_for_lang(language)
 
     pattern = re.compile('(%s[%s]+%s)' %
                          (re.escape(delimiters[0]), _EMOJI_NAME_PATTERN, re.escape(delimiters[1])))
@@ -127,9 +139,9 @@ def emojize(
         if emj is None:
             return match.group(1)
 
-        if version is not None and unicode_codes.EMOJI_DATA[emj]['E'] > version:
+        if version is not None and data_dict.EMOJI_DATA[emj]['E'] > version:
             if callable(handle_version):
-                emj_data = unicode_codes.EMOJI_DATA[emj].copy()
+                emj_data = data_dict.EMOJI_DATA[emj].copy()
                 emj_data['match_start'] = match.start()
                 emj_data['match_end'] = match.end()
                 return handle_version(emj, emj_data)
@@ -139,7 +151,7 @@ def emojize(
             else:
                 return ''
 
-        if variant is None or 'variant' not in unicode_codes.EMOJI_DATA[emj]:
+        if variant is None or 'variant' not in data_dict.EMOJI_DATA[emj]:
             return emj
 
         if emj[-1] == '\uFE0E' or emj[-1] == '\uFE0F':
@@ -308,7 +320,7 @@ def is_emoji(string):
     Returns True if the string is a single emoji, and it is "recommended for
     general interchange" by Unicode.org.
     """
-    return string in unicode_codes.EMOJI_DATA
+    return string in data_dict.EMOJI_DATA
 
 def purely_emoji(string: str) -> bool:
     """
@@ -332,20 +344,20 @@ def version(string):
     :raises ValueError: if ``string`` does not contain an emoji
     """
     # Try dictionary lookup
-    if string in unicode_codes.EMOJI_DATA:
-        return unicode_codes.EMOJI_DATA[string]['E']
+    if string in data_dict.EMOJI_DATA:
+        return data_dict.EMOJI_DATA[string]['E']
 
-    language_pack = unicode_codes.get_emoji_unicode_dict('en')
+    language_pack = data_dict_retrieval.get_emoji_data_for_lang('en')
     if string in language_pack:
         emj_code = language_pack[string]
-        if emj_code in unicode_codes.EMOJI_DATA:
-            return unicode_codes.EMOJI_DATA[emj_code]['E']
+        if emj_code in data_dict.EMOJI_DATA:
+            return data_dict.EMOJI_DATA[emj_code]['E']
 
     # Try to find first emoji in string
     version = []
 
     def f(e, emoji_data):
-        version.append(emoji_data['E'])
+        version.append(emoji_data['R'])
         return ''
     replace_emoji(string, replace=f, version=-1)
     if version:
@@ -353,7 +365,7 @@ def version(string):
     emojize(string, language='alias', version=-1, handle_version=f)
     if version:
         return version[0]
-    for lang_code in unicode_codes._EMOJI_UNICODE:
+    for lang_code in data_dict_retrieval._EMOJI_LANG_CACHE:
         emojize(string, language=lang_code, version=-1, handle_version=f)
         if version:
             return version[0]

@@ -14,7 +14,9 @@ __all__ = [
     'tokenize', 'filter_tokens',
 ]
 
-_ZWJ_CODEPOINT='U+200D' # Unicode code point for the Zero Width Joiner.
+_VARIATION_SELECTOR_16 = '️' # Used to specify a particular glyph variation for a base character
+_REPLACEMENT_CHARACTER = '�' # "U+FFFD"
+_ZWJ_CODEPOINT='U+200D' # Unicode code point for the Zero Width Joiner
 _ZWJ = '\u200D'
 _SEARCH_TREE = None
 

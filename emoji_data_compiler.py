@@ -609,7 +609,7 @@ def generate_data():
         data_string = f"""    '{code}': {{  # {emj}
         'en': ':{v['en']}:',
         'status': {v["status"]},
-        'E': {v["version"]:g}{alias}{variant}{language_str}
+        'e': {v["version"]:g}{alias}{variant}{language_str}
     }}"""
         
         data_file_path = os.path.join(os.path.dirname(__file__), "emoji_data_dict.py")
@@ -653,11 +653,11 @@ def _extract_emoji_test_data_from_file(emoji_test_txt: str):
     
     "\U0001F600": {  # 😀
         "index": 1,                        int
-        "group": "Smileys & Emotion",      str
-        "subgroup": "face-smiling",        str
+        "category": "Smileys & Emotion",      str
+        "subcategory": "face-smiling",        str
         "status": fully_qualified,         int
         "emoji": "😀",                     str
-        "e": 1.0,                          float
+        "E": 1.0,                          float
         "unicodes": ['U+1F600'],           list
         "codepoints": ['1F600'],           list
         "sequences": ['\\U0001F600'],      list
@@ -676,8 +676,8 @@ def _extract_emoji_test_data_from_file(emoji_test_txt: str):
         "zh": ":嘿嘿:",
     """
    
-    current_group = None
-    current_subgroup = None
+    current_category = None
+    current_subcategory = None
     current_status = None
     current_codepoint = None
     current_emoji = None
@@ -691,14 +691,14 @@ def _extract_emoji_test_data_from_file(emoji_test_txt: str):
             
             line = line.strip()
 
-            # Get the group...
+            # Get the category...
             if line.startswith("# group:"):
-                current_group = line.split("# group:")[1].strip()
-                EMOJIS[current_group] = {}
-            # Get subgroup...
+                current_category = line.split("# group:")[1].strip()
+                EMOJIS[current_category] = {}
+            # Get subcategory...
             elif line.startswith("# subgroup:"):
-                current_subgroup = line.split("# subgroup:")[1].strip()
-                EMOJIS  [current_group][current_subgroup] = {}
+                current_subcategory = line.split("# subgroup:")[1].strip()
+                EMOJIS  [current_category][current_subcategory] = {}
             # Get the codepoint and status...
             elif line.startswith(("0", "1", "2", "3")):
                 line_parts = line.split(";")
@@ -758,11 +758,11 @@ def _extract_emoji_test_data_from_file(emoji_test_txt: str):
                 # Compile the data...
                 EMOJIS[emoji_sequence] = {}
                 EMOJIS[emoji_sequence]["index"] = real_index
-                EMOJIS[emoji_sequence]["group"] = current_group
-                EMOJIS[emoji_sequence]["subgroup"] = current_subgroup
+                EMOJIS[emoji_sequence]["category"] = current_category
+                EMOJIS[emoji_sequence]["subcategory"] = current_subcategory
                 EMOJIS[emoji_sequence]["status"] = current_status
                 EMOJIS[emoji_sequence]["emoji"] = current_emoji
-                EMOJIS[emoji_sequence]["e"] = current_version
+                EMOJIS[emoji_sequence]["E"] = current_version
                 EMOJIS[emoji_sequence]["unicodes"] = _unicode(current_emoji)
                 EMOJIS[emoji_sequence]["codepoints"] = current_codepoint.split(" ")
                 EMOJIS[emoji_sequence]["sequences"] = emoji_sequence.split(" ")
@@ -780,23 +780,32 @@ def _extract_emoji_test_data_from_file(emoji_test_txt: str):
                             LANG_STRING += f"""        "{lang}": "{emoji_name_in_lang }" """
                             continue
                         LANG_STRING += f"""        "{lang}": "{emoji_name_in_lang }",\n"""
-                        
+                
+                sequences = emoji_sequence.split("\\")
+                escaped_sequences = []
+                _new_str = ""
+                for item in sequences:
+                    if item == '':
+                        continue
+                    _new_str += f"\\{item}"
+                    escaped_sequences.append(_new_str)
+                    _new_str = ""       
+                
                 DATA = f"""    "{emoji_sequence}": {{  # {current_emoji}
         "index": {int(real_index)},
-        "group": "{current_group}",
-        "subgroup": "{current_subgroup}",
+        "category": "{current_category}",
+        "subcategory": "{current_subcategory}",
         "status": {current_status},
         "emoji": "{current_emoji}",
-        "e": {float(current_version)},
-        "unicodes": {_unicode(current_emoji)},
+        "E": {float(current_version)},
+        "u_notation": {_unicode(current_emoji)},
         "codepoints": {current_codepoint.split(" ")},
-        "sequences": {emoji_sequence.split(" ")},
-        "category": "{unicodedata.category(current_emoji[0])}",
+        "escaped_sequences": {escaped_sequences},
         "name": "{current_emoji_name}",
 {LANG_STRING}
     }},\n"""
                 
-                yield [DATA, [real_index, current_group, current_subgroup, current_status,
+                yield [DATA, [real_index, current_category, current_subcategory, current_status,
                               current_emoji, current_version, current_emoji_name,
                               _unicode(current_emoji), current_codepoint.split(" "),
                               emoji_sequence.split(" ")], unicodedata.category(current_emoji[0])]
