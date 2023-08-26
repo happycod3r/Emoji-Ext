@@ -39,7 +39,6 @@ def get_categories_dict() -> dict:
     for key in EMOJI_DATA.keys():
         categories.append(EMOJI_DATA[key]["category"])
         categories.append(EMOJI_DATA[key]["subcategory"])
-
     for i in range(len(categories)):
         if len(unique_categories) == 0:
             unique_categories.append(categories[i])
@@ -52,10 +51,10 @@ def get_categories_dict() -> dict:
     for i in range(len(unique_categories)):
         for key in EMOJI_DATA.keys():
             if unique_categories[i] == EMOJI_DATA[key]["category"]:
-                current_category = unique_categories[i]
+                current_category = unique_categories[i].lower().replace("&", "and").replace(" ", "_")
                 categories_dict[current_category] = {}
             if unique_categories[i] == EMOJI_DATA[key]["subcategory"]:
-                current_subcategory = unique_categories[i]
-                categories_dict[current_category][current_subcategory] = index
+                current_subcategory = unique_categories[i].lower().replace("-", "_")
+                categories_dict[current_category][current_subcategory] = {index}
             index = index + 1            
-    
+    return categories_dict
