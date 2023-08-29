@@ -543,6 +543,7 @@ def extract_emoji_data():
     current_emoji = None
     current_version = None
     current_emoji_name = None
+    current_emoji_names = []
     current_emoji_alias = None
     is_emoji_variant = False
     real_index = 0 # The index of the line we actually start counting from.
@@ -574,7 +575,12 @@ def extract_emoji_data():
             
             #//////////// EMOJI STATUS //////
             current_status = line_data[0].strip().replace("-", "_")
+            
+            def _contains(char: str, string: str):
+                return char in string
+                
             emj_name = ""
+            emj_names = []
             for item in line_data:
                 
                 #//////////// EMOJI //////
@@ -582,7 +588,7 @@ def extract_emoji_data():
                     current_emoji = item
                     
                 #//////////// EMOJI VERSION //////
-                elif item.startswith("E") and item[1].isdigit(): # Account for any names that may start with "E"
+                elif item.startswith("E") and item[1].isdigit():
                     item_parts = item.strip().split("E")
                     for part in item_parts:
                         if part == "":
@@ -593,18 +599,33 @@ def extract_emoji_data():
                     continue
                 elif item == "component" or item == "fully-qualified" or item == "minimally-qualified" or item == "unqualified":
                     continue
-                
                 #//////////// EMOJI NAME //////
+                # flag: Zambia
+                # flag: Zimbabwe
+                # A button (blood type)
+                # keycap: #
+                # keycap: *
+                # eight-spoked asterisk
+                # bucket
+                # woman scientist
+                # woman scientist: light skin  <---
+                # factory worker: medium       <--- 
                 elif item == "flag:":
+                    emj_names.append(item)
                     emj_name += item
-                elif item.startswith("_"): #--\
-                    emj_name += item           #-- So we don't end up with names like this: _some__emoji_name__
-                elif item.endswith("_"):   #--/  
-                    emj_name += item
+                elif ":" in item:
+                    emj_name += item.replace(":", "_")
+                    emj_names.append(item.replace(":", "_"))
+                elif item == "keycap: #":
+                    emj_name += item.replace(":", " ").replace(" ", "_")
+                    emj_names.append(item.replace(":", " ").replace(" ", "_"))
                 else:
-                    emj_name += f"_{item.strip()}" # Everything left over is the name
-                    
-            current_emoji_name = emj_name
+                    emj_name += f"_{item}" # Everything left over is the name
+                    emj_names.append(f"_{item}")
+                   
+            
+            current_emoji_name = emj_name.replace("-", "_")
+            current_emoji_names = emj_names
             
             if current_emoji_name.startswith("_"):
                 current_emoji_name = current_emoji_name.lstrip("_")     
@@ -621,16 +642,16 @@ def extract_emoji_data():
         if current_emoji is not None: 
             
             #//////////// ALIASES //////
-            if current_emoji in OLD_EMOJI_DATA:
-                if "alias" in OLD_EMOJI_DATA[current_emoji]:
+            if current_emoji in ORIGINAL_EMOJI_DATA:
+                if "alias" in ORIGINAL_EMOJI_DATA[current_emoji]:
                     current_emoji_alias = []
-                    for i in range(len(OLD_EMOJI_DATA[current_emoji]["alias"])):
-                        current_emoji_alias.append(OLD_EMOJI_DATA[current_emoji]["alias"][i].lower())
+                    for i in range(len(ORIGINAL_EMOJI_DATA[current_emoji]["alias"])):
+                        current_emoji_alias.append(ORIGINAL_EMOJI_DATA[current_emoji]["alias"][i].lower())
 
             #//////////// VARIANT //////
-            if current_emoji in OLD_EMOJI_DATA:
-                if "variant" in OLD_EMOJI_DATA[current_emoji]:
-                    is_emoji_variant = OLD_EMOJI_DATA[current_emoji]["variant"]
+            if current_emoji in ORIGINAL_EMOJI_DATA:
+                if "variant" in ORIGINAL_EMOJI_DATA[current_emoji]:
+                    is_emoji_variant = ORIGINAL_EMOJI_DATA[current_emoji]["variant"]
                 else:
                     is_emoji_variant = False
                     
@@ -678,12 +699,13 @@ def extract_emoji_data():
         "status": {current_status},
         "emoji": "{current_emoji}",
         "E": {float(current_version)},
-        "u_notation": {_unicode(current_emoji)},
+        "unicode": {_unicode(current_emoji)},
         "codepoints": {current_codepoints},
-        "escaped_sequences": {escaped_sequences},
+        "sequences": {escaped_sequences},
         "variant": {is_emoji_variant},
         "alias": {current_emoji_alias},
         "name": "{current_emoji_name}",
+        "names": {current_emoji_names},
 {LANG_STRING}
     }},\n"""
 
