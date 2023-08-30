@@ -543,10 +543,9 @@ def extract_emoji_data():
     current_emoji = None
     current_version = None
     current_emoji_name = None
-    current_emoji_names = []
     current_emoji_alias = None
     is_emoji_variant = False
-    real_index = 0 # The index of the line we actually start counting from.
+    real_index = 0
     
     #//////////// UNICODE EMOJI-TEST.TXT //////
     for current_line, line in enumerate(get_unicode_emoji_test_file(15.0)):
@@ -564,23 +563,17 @@ def extract_emoji_data():
         elif line.startswith("# subgroup:"):
             current_subcategory = line.split("# subgroup:")[1].strip().lower()
             current_subcategory = current_subcategory.replace("-", "_")
-            
-        elif line.startswith(("0", "1", "2", "3", "4")): # Starting values of codepoints
+        
+        #//////////// EMOJI CODEPOINTS //////
+        elif line.startswith(("0", "1", "2", "3", "4")):
             line_parts = line.split(";")
-            
-            #//////////// EMOJI CODEPOINTS //////
             current_codepoints = line_parts[0].strip()
             current_codepoints = f"{current_codepoints.split(' ')}"
             line_data = line_parts[1].strip().split(" ")
-            
+
             #//////////// EMOJI STATUS //////
-            current_status = line_data[0].strip().replace("-", "_")
-            
-            def _contains(char: str, string: str):
-                return char in string
-                
+            current_status = line_data[0].strip().replace("-", "_")            
             emj_name = ""
-            emj_names = []
             for item in line_data:
                 
                 #//////////// EMOJI //////
@@ -595,45 +588,46 @@ def extract_emoji_data():
                             continue
                         if part[0].isdigit():
                             current_version = part
-                elif item == '' or item == '#':
-                    continue
                 elif item == "component" or item == "fully-qualified" or item == "minimally-qualified" or item == "unqualified":
                     continue
+                elif item == '' or item == "#":
+                    continue
                 #//////////// EMOJI NAME //////
-                # flag: Zambia
-                # flag: Zimbabwe
-                # A button (blood type)
-                # keycap: #
-                # keycap: *
-                # eight-spoked asterisk
-                # bucket
-                # woman scientist
-                # woman scientist: light skin  <---
-                # factory worker: medium       <--- 
-                elif item == "flag:":
-                    emj_names.append(item)
-                    emj_name += item
-                elif ":" in item:
-                    emj_name += item.replace(":", "_")
-                    emj_names.append(item.replace(":", "_"))
-                elif item == "keycap: #":
-                    emj_name += item.replace(":", " ").replace(" ", "_")
-                    emj_names.append(item.replace(":", " ").replace(" ", "_"))
-                else:
-                    emj_name += f"_{item}" # Everything left over is the name
-                    emj_names.append(f"_{item}")
-                   
+                # elif item == "keycap:":
+                #     emj_name += item.replace(":", " ").strip()
+                # elif item == "(blood":
+                #     item = item.lstrip("(")
+                #     new_txt = ""
+                #     new_txt += "_"
+                #     for i in range(len(item)):
+                #         new_txt += item[i]
+                #     new_txt += "_"
+                #     item = new_txt
+                #     emj_name += item
+                # elif item == "type)":
+                #     emj_name += item.rstrip(")")
+                # elif item.startswith("(") and item.endswith(")"):
+                #     emj_name += item.lstrip("(").rstrip(")")
+                #     print(real_index, item)
+                # elif ":" in item:
+                #     emj_name += item.replace(":", "_")
+                # elif "“" in item or "”" in item:
+                #     emj_name += item.replace("“", "_").replace("”", "_")
+                # else:
+                #     emj_name += f"_{item}"
+
+            #current_emoji_name = emj_name.replace("-", "_")
             
-            current_emoji_name = emj_name.replace("-", "_")
-            current_emoji_names = emj_names
-            
+            if current_emoji in ORIGINAL_EMOJI_DATA:
+                current_emoji_name = ORIGINAL_EMOJI_DATA[current_emoji]["en"]
+                
             if current_emoji_name.startswith("_"):
                 current_emoji_name = current_emoji_name.lstrip("_")     
             current_emoji_name = adapt_emoji_name(current_emoji_name, "en", current_emoji)
            
         #////// FILTERS //////
 
-        # Filter out the file header section
+        # Filter out the file header text
         if current_line < 35: # Table data starts on line #35.
             continue
 
@@ -705,7 +699,6 @@ def extract_emoji_data():
         "variant": {is_emoji_variant},
         "alias": {current_emoji_alias},
         "name": "{current_emoji_name}",
-        "names": {current_emoji_names},
 {LANG_STRING}
     }},\n"""
 
@@ -1283,31 +1276,15 @@ EMOJI_DATA = {
 
     extracted_data = extract_emoji_data()
 
-    current_category = None
-    current_subcategory = None
-    current_status = None
     current_emoji = None
     previous_emoji = None
-    current_version = None
-    current_emoji_name = None
-    current_unotations = None
-    current_codepoints = None
-    current_sequences = None
 
     progress = 0
     clocks = ['🕛', '🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖', '🕗', '🕘', '🕙', '🕚', '🕡']
     clock_index = 0
     for data in extracted_data:
         string_data = data[0]
-        current_category = data[1][1]
-        current_subcategory = data[1][2]
-        current_status = data[1][3]
         current_emoji = data[1][4]
-        current_version = data[1][5]
-        current_emoji_name = data[1][6]
-        current_unotations = data[1][7]
-        current_codepoints = data[1][8]
-        current_sequences = data[1][9]
         
         for i in enumerate(clocks):
             if clock_index == 12:

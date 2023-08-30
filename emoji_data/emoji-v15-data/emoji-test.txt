@@ -734,7 +734,7 @@
 1F9D1 1F3FE 200D 1F9B3                                 ; fully-qualified     # 🧑🏾‍🦳 E12.1 person: medium-dark skin tone, white hair
 1F9D1 1F3FF 200D 1F9B3                                 ; fully-qualified     # 🧑🏿‍🦳 E12.1 person: dark skin tone, white hair
 1F469 200D 1F9B2                                       ; fully-qualified     # 👩‍🦲 E11.0 woman: bald
-1F469 1F3FB 200D 1F9B2                                 ; fully-qualified     # 👩🏻‍🦲 E11.0 woman: light skin tone, bald
+1F469 1F3FB 200D 1F9B2                                 ; fully-qualified     # 👩🏻‍🦲 E11.0     
 1F469 1F3FC 200D 1F9B2                                 ; fully-qualified     # 👩🏼‍🦲 E11.0 woman: medium-light skin tone, bald
 1F469 1F3FD 200D 1F9B2                                 ; fully-qualified     # 👩🏽‍🦲 E11.0 woman: medium skin tone, bald
 1F469 1F3FE 200D 1F9B2                                 ; fully-qualified     # 👩🏾‍🦲 E11.0 woman: medium-dark skin tone, bald
