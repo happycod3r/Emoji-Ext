@@ -14,18 +14,14 @@ from emoji_data.data_dict_retrieval import _EMOJI_ALIASES_CACHE, _EMOJI_LANG_CAC
 from emoji_data.data_dict import EMOJI_DATA, CATEGORIES, LANGUAGES, STATUS
 
 __all__ = [
-    'category_exists', 'emojize', 'demojize', 'analyze', 'config',
-    'emoji_list', 'distinct_emoji_list', 'emoji_count',
-    'replace_emoji', 'is_emoji', 'purely_emoji', 'version',
-    'Token', 'EmojiMatch', 'EmojiMatchZWJ', 'EmojiMatchZWJNonRGI',
-    #########################################
-    'category_exists',
+    "category_exists", "category", 
+    "Token", "EmojiMatch", "EmojiMatchZWJ", "EmojiMatchZWJNonRGI",
 ]
 
 _DEFAULT_DELIMITER = ':'
 _EMOJI_NAME_PATTERN = '\\w\\-&.’”“()!#*+,/«»\u0300\u0301\u0302\u0303\u0308\u030a\u0327\u064b\u064e\u064f\u0650\u0653\u0654\u3099\u30fb\u309a'
 
-class Emojix: 
+class BasicEmojis: 
     def __init__(self):
         
         self.emojis = {
@@ -642,7 +638,7 @@ class Emojix:
                 if not duplicate:
                     emojis.append(char)
         return emojis
-        
+    
     def emoji_count(self, text: str, unique: bool=False) -> int:
         count = 0
         emojis = []
@@ -784,12 +780,12 @@ def category_exists(category: str=None, category_id: int=None) -> bool:
             return True
     return False
     
-def category(emojis: (list[str] | str)) -> (dict | List[Dict] | None):
+def category(emoji: (list[str] | str)) -> (dict | List[Dict] | None):
     categories = []
-    for i in range(len(emojis)):
-        if is_emoji(emojis[i]):                    
+    for i in range(len(emoji)):
+        if is_emoji(emoji[i]):                    
             for key in EMOJI_DATA.keys():
-                if key == emojis[i]:
+                if key == emoji[i]:
                     data = {}
                     data["emoji"] = key
                     data["category"] = EMOJI_DATA[key]["category"]
@@ -814,27 +810,20 @@ def get_all_categories(only_names: bool=False) -> List[str]:
         return categories
     return CATEGORIES
 
-def get_top_level_categories(only_names: bool=False) -> List[str]:
-    top_lvl_categories = []        
+def top_level_categories() -> List[Dict[str, int]]:
+    top_lvl_categories = []
     for key in CATEGORIES.keys():
-        if only_names:
-            top_lvl_categories.append(key)
-            continue
         data = {"category": key, "id": CATEGORIES[key]["id"]}
         top_lvl_categories.append(data)
     return top_lvl_categories
 
-def get_sub_level_categories(only_names: bool=False) -> List[str]:
+def sub_level_categories() -> List[Dict[str, int]]:
     sub_lvl_categories = []
     for key in CATEGORIES.keys():
         for subkey in CATEGORIES[key]:
             if subkey != "id":
-                if only_names:
-                    sub_lvl_categories.append(subkey)
-                    continue
                 data = {"subcategory": subkey, "id": CATEGORIES[key][subkey]}
                 sub_lvl_categories.append(data)
-            
     return sub_lvl_categories
 
 def is_top_level_category(category: str=None, category_id: int=None) -> (bool | None):
@@ -849,42 +838,62 @@ def is_top_level_category(category: str=None, category_id: int=None) -> (bool | 
                 return True
         return False
     return None
-
-def get_parent_category(category: str=None, category_id: int=None, name_only: bool=False) -> (str | None):
+ 
+def parent_category(category: str=None, category_id: int=None, emojis_in_category: bool=False) -> (str | None):
     if category_id is not None and category_exists(category_id=category_id):
         for key in CATEGORIES.keys():
             for subkey in CATEGORIES[key].keys():
                 if CATEGORIES[key][subkey] == category_id:
-                    data = {"category": key, "id":CATEGORIES[key]["id"]}
-                    return data
+                    if not emojis_in_category:
+                        data = {"category": key, "id":CATEGORIES[key]["id"]}
+                        return data
+                    emojis = []
+                    for edkey in EMOJI_DATA.keys():
+                        if EMOJI_DATA[edkey]["category"] == key:
+                            emojis.append(EMOJI_DATA[edkey])
+                    return emojis
     if category_id is None and category is not None and category_exists(category):
         for key in CATEGORIES.keys():
             for subkey in CATEGORIES[key].keys():
                 if subkey == category:
-                    return {"category": key, "id": CATEGORIES[key]["id"]}
+                    if not emojis_in_category:
+                        return {"category": key, "id": CATEGORIES[key]["id"]}
+                    emojis = []
+                    for edkey in EMOJI_DATA.keys():
+                        if EMOJI_DATA[edkey]["category"] == key:
+                            emojis.append(EMOJI_DATA[edkey])
+                    return emojis
 
-def get_child_categories(category: str=None, category_id: int=None, name_only: bool=False) -> (List[str] | None):
+def child_categories(category: str=None, category_id: int=None, emojis_in_category: bool=False) -> (List[str] | None):
     child_categories = []
     if category_id is not None and category_exists(category_id=category_id):
         for key in CATEGORIES.keys():
             if CATEGORIES[key]["id"] == category_id:
-                for subkey in CATEGORIES[key]:
+                for subkey in CATEGORIES[key].keys():
                     if subkey == "id":
-                        continue    
-                    if name_only:
-                        child_categories.append(subkey)
-                    data = {"subcategory": subkey, "id": CATEGORIES[key][subkey]}
+                        continue
+                    if not emojis_in_category:
+                        data = {"subcategory": subkey, "id": CATEGORIES[key][subkey]}
+                    emojis = []
+                    for edkey in EMOJI_DATA.keys():
+                        if EMOJI_DATA[edkey]["subcategory"] == subkey:
+                            emojis.append(EMOJI_DATA[edkey])
+                    data = {"subcategory": subkey, "id": CATEGORIES[key][subkey], "emojis": emojis}
                     child_categories.append(data)
         return child_categories
     if category is not None and category_exists(category):
         for key in CATEGORIES.keys():
             if key == category:
-                for subkey in CATEGORIES[key]:
+                for subkey in CATEGORIES[key].keys():
                     if subkey == "id":
                         continue
-                    if name_only:
-                        child_categories.append(subkey)
-                    data = {"subcategory": subkey, "id": CATEGORIES[key][subkey]}
+                    if not emojis_in_category:
+                        data = {"subcategory": subkey, "id": CATEGORIES[key][subkey]}
+                    emojis = []
+                    for edkey in EMOJI_DATA.keys():
+                        if EMOJI_DATA[edkey]["subcategory"] == subkey:
+                            emojis.append(EMOJI_DATA[edkey])
+                    data = {"subcategory": subkey, "id": CATEGORIES[key][subkey], "emojis": emojis}
                     child_categories.append(data)
     return child_categories
 
@@ -959,21 +968,24 @@ def emoji_to_unicode(emoji: str | List[str]) -> (str | List[str]):
         unicode_strings.append(f"U+{codepoint:04X}")        
     return unicode_strings
 
-def get_emoji_name(emoji: str) -> (str | None):
+def emoji_name(emoji: str) -> (str | None):
     if is_emoji(emoji):
         for key in EMOJI_DATA.keys():
             if key == emoji:
                 return EMOJI_DATA[key]["name"]
     return None
 
-def get_emoji_by_name(
-    name: str) -> (str | None):
+def get_emoji_by_name(name: str) -> (str | None):
     for key in EMOJI_DATA.keys():
         _name = EMOJI_DATA[key]["name"]
         if _name == f":{name}:":
             return key
-            
-    
+
+def has_zwj(text: str) -> (bool | None):
+    for i in range(len(text)):
+        if text[i] == '️':
+            return True
+    return False
 
 def emojize(
         string,
