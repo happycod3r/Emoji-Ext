@@ -1,8 +1,8 @@
-from emoji_data.data_dict import *
+from emoji_data.data_dict import EMOJI_DATA, CATEGORIES, LANGUAGES, STATUS
 
 __all__ = [
     'generate_emoji_data_for_lang', 'generate_emoji_aliases_dict',
-    'EMOJI_DATA', 'STATUS', 'LANGUAGES'
+    'EMOJI_DATA', 'STATUS', 'LANGUAGES', 'CATEGORIES'
 ]
 
 _EMOJI_LANG_CACHE = {lang: None for lang in LANGUAGES}  # Cache for the language dicts
@@ -32,7 +32,7 @@ def get_emoji_aliases_data() -> dict:
 
     return _EMOJI_ALIASES_CACHE
 
-def get_categories_dict() -> dict:
+def get_categories_data() -> dict:
     categories = []
     unique_categories = []
     categories_dict = {}
@@ -58,3 +58,12 @@ def get_categories_dict() -> dict:
                 categories_dict[current_category][current_subcategory] = {index}
             index = index + 1            
     return categories_dict
+
+def categories_key_chain():
+    return CATEGORIES.keys()
+
+def emoji_data() -> dict:
+    return EMOJI_DATA
+
+def key_chain() -> dict:
+    return EMOJI_DATA.keys()
