@@ -1,168 +1,178 @@
 import core as emojix
 
-# core.category_exists()
 def test_category_exists():
-    print(emojix.category_exists(category="people_and_emotions")) # >>> False
-    print(emojix.category_exists(category="smileys_and_emotion")) # >>> True
-    print(emojix.category_exists(category_id=491123)) # >>> False
-    print(emojix.category_exists(category_id=491122)) # >>> True
+    print("test_category_exists()")
+    if not emojix.category_exists(category="people_and_emotions"): 
+        return True
+    else:
+        return False
     
 def test_category():
-    print(emojix.category("🎃"))
-    # Output:
-    # >>> {'emoji': '🎃', 'category': 'activities', 'category_id': 335508, 'subcategory': 'event', 'subcategory_id': 325613}
+    print("test_category()")
+    if emojix.category("🎃")["category"] == "activities":
+        return True
+    return False
 
 def test_get_all_categories():
-    categories = emojix.get_all_categories()
-    for item in categories:
-        print(categories[item])
-    # Output:
-    # >>> {'id': 491122, 'face_smiling': 4745, 'face_affection': 9488, 'face_tongue': 14227, 'face_hand': 18967, 'face_neutral_skeptical': 23715, 'face_sleepy': 28453, 'face_unwell': 33198, 'face_hat': 37934, 'face_glasses': 42670, 'face_concerned': 47430, 'face_negative': 52172, 'face_costume': 56913, 'cat_face': 61655, 'monkey_face': 66391, 'heart': 71153, 'emotion': 75906}, ..., ...
-    
-    for item in categories:
-        print(item)
-    
-    # Output:
-    # >>> smileys_and_emotion
-    # people_and_body
-    # component
-    # animals_and_nature
-    # food_and_drink
-    # travel_and_places
-    # activities
-    # objects
-    # symbols
-    # flags 
-
+    print("test_get_all_categories()")
+    if isinstance(emojix.get_all_categories(), dict):
+        return True
+    return False
+        
 def test_top_level_categories():
-    for item in emojix.top_level_categories():
-        print(item)
-    # output:
-    # >>> {'category': 'smileys_and_emotion', 'id': 491122}
-    # {'category': 'people_and_body', 'id': 899911}
-    # {'category': 'component', 'id': 113687}
-    # {'category': 'animals_and_nature', 'id': 116815}
-    # {'category': 'food_and_drink', 'id': 228130}
-    # {'category': 'travel_and_places', 'id': 227294}
-    # {'category': 'activities', 'id': 335508}
-    # {'category': 'objects', 'id': 336837}
-    # {'category': 'symbols', 'id': 449583}
-    # {'category': 'flags', 'id': 552605}
-  
+    print("test_top_level_categories()")
+    if isinstance(emojix.top_level_categories(), list):
+        return True
+    return False
+
 def test_sub_level_categories():
-    for item in emojix.sub_level_categories():
-        print(item)
-    # output:
-    # >>> {'subcategory': 'face_smiling', 'id': 4745}
-    # {'subcategory': 'face_affection', 'id': 9488}
-    # {'subcategory': 'face_tongue', 'id': 14227}
-    # {'subcategory': 'face_hand', 'id': 18967}
-    # {'subcategory': 'face_neutral_skeptical', 'id': 23715}
-    # {'subcategory': 'face_sleepy', 'id': 28453}
+    print("test_sub_level_categories()")
+    if isinstance(emojix.sub_level_categories(), list):
+        return True
+    return False
 
 def test_is_top_level_category():
-    print(emojix.is_top_level_category("people_and_body")) # >>> True
-    print(emojix.is_top_level_category("person_role"))     # >>> False
-    
+    print("test_is_top_level_category()")
+    if emojix.is_top_level_category("people_and_body") == True and emojix.is_top_level_category("person_role") == False:
+        return True
+    return False
+        
 def test_parent_category():
-    print(emojix.parent_category(category="person_role")) 
-    # output:
-    # >>> {'category': 'people_and_body', 'id': 899911}
+    print("test_parent_category()")
+    if isinstance(emojix.parent_category(category="person_role"), dict):
+        return True
+    return False
 
 def test_child_categories():
-    print(emojix.child_categories(category="people_and_body"))
-    # output:
-    # >>> [{'subcategory': 'hand_fingers_open', 'id': 85439}, {'subcategory': 'hand_fingers_partial', 'id': 90227}, 
-    # {'subcategory': 'hand_single_finger', 'id': 95003}, {'subcategory': 'hand_fingers_closed', 'id': 99772}, 
-    # {'subcategory': 'hands', 'id': 104567}, {'subcategory': 'hand_prop', 'id': 109319}, {'subcategory': 'body_parts', 'id': 114101}, 
-    # {'subcategory': 'person', 'id': 119026}, {'subcategory': 'person_gesture', 'id': 124059}, {'subcategory': 'person_role', 'id': 129427}, 
-    # {'subcategory': 'person_fantasy', 'id': 134405}, {'subcategory': 'person_activity', 'id': 139456}, {'subcategory': 'person_sport', 'id': 144584}, 
-    # {'subcategory': 'person_resting', 'id': 149359}, {'subcategory': 'family', 'id': 154626}, {'subcategory': 'person_symbol', 'id': 159365}]
-    
-    print(emojix.child_categories(category="people_and_body", emojis_in_category=True))
-    # output:
-    # >>> [{'subcategory': 'hand_fingers_open', 'id': 85439, 'emojis': [{'index': 218, 'category': 'people_and_body', 'category_id': 899911, 'subcategory': 'hand_fingers_open', 'subcategory_id': 85439, 'status': 2, 'emoji': '👋', ..., ...}]
+    print("test_child_categories()")
+    if isinstance(emojix.child_categories(category="people_and_body"), dict):
+        return True
+    return False
 
 def test_iterate_category():
-    emojix.iterate_category(lambda x, *args, **kwargs: print(x, "\n\n"), category="person_symbol")
-    # output: 
-    # >>> {'index': 3243, 'category': 'people_and_body', 'category_id': 899911, 'subcategory': 'person_symbol', 
-    # 'subcategory_id': 159365, 'status': 2, 'emoji': '👥', 'E': 1.0, 'unicode': ['U+1F465'], 'codepoints': ['1F465'], 
-    # 'sequences': ['\\U0001F465'], 'variant': False, 'alias': [':speaking_head_in_silhouette:'], 'name': 
-    # ':busts_in_silhouette:', 'en': ':busts_in_silhouette:', 'es': ':dos_siluetas_de_bustos:', 'ja': ':2人のシルエット
-    # :', 'ko': ':사람들_그림자:', 'pt': ':silhueta_de_bustos:', 'it': ':profilo_di_due_persone:', 'fr': 
-    # ':silhouettes_de_bustes:', 'de': ':silhouette_mehrerer_büsten:', 'fa': ':تندیس_های_سایه_نما:', 'id': 
-    # ':beberapa_siluet_foto_setengah_badan:', 'zh': ':双人像:'}
-    
-    emojix.iterate_category(print, category="person_symbol")    
-    # output: 
-    # >>> {'index': 3243, 'category': 'people_and_body', 'category_id': 899911, 'subcategory': 'person_symbol', 
-    # 'subcategory_id': 159365, 'status': 2, 'emoji': '👥', 'E': 1.0, 'unicode': ['U+1F465'], 'codepoints': ['1F465'], 
-    # 'sequences': ['\\U0001F465'], 'variant': False, 'alias': [':speaking_head_in_silhouette:'], 'name': 
-    # ':busts_in_silhouette:', 'en': ':busts_in_silhouette:', 'es': ':dos_siluetas_de_bustos:', 'ja': ':2人のシルエット
-    # :', 'ko': ':사람들_그림자:', 'pt': ':silhueta_de_bustos:', 'it': ':profilo_di_due_persone:', 'fr': 
-    # ':silhouettes_de_bustes:', 'de': ':silhouette_mehrerer_büsten:', 'fa': ':تندیس_های_سایه_نما:', 'id': 
-    # ':beberapa_siluet_foto_setengah_badan:', 'zh': ':双人像:'}
-    
+    print("test_iterate_category()")
+    try:
+        emojix.iterate_category(lambda x, *args, **kwargs: True, category="person_symbol")
+        return True
+    except Exception as e:
+        return False
+        
 def test_emoji_factory():
-    for item in emojix.emoji_factory(category="person_symbol"):
-        print(item["emoji"])
-    # output:
-    # >>>  
-    # 🗣️
-    # 🗣
-    # 👤
-    # 👥
-    # 🫂
-    # 👣
+    print("test_emoji_factory()")
+    try:
+        for (i, item) in enumerate(emojix.emoji_factory(category="person_symbol")):
+            if isinstance(item, dict) is not True:
+                return False
+        return True
+    except Exception as e:
+        return False
 
 def test_get_emojis_in_category():
-    for item in emojix.get_emojis_in_category(category="person_symbol"):  
-        print(item["emoji"], item["E"])
-    # output:
-    # >>>
-    # 🗣️ 0.7
-    # 🗣 0.7
-    # 👤 0.6
-    # 👥 1.0
-    # 🫂 13.0
-    # 👣 0.6
+    print("test_get_emojis_in_category()")
+    try:
+        for (i, item) in enumerate(emojix.get_emojis_in_category(category="person_symbol")):  
+            if isinstance(item, dict) is not True:
+                return False
+        return True
+    except Exception as e:
+        return False
 
 def test_is_emoji_variation():
-    print(emojix.is_emoji_variation("💭")) # >>> False
-    print(emojix.is_emoji_variation("🕷"))  # >>> True
+    print("test_is_emoji_variation()")
+    if emojix.is_emoji_variation("💭") == False and emojix.is_emoji_variation("🕷") == True:
+        return True
+    return False
     
 def test_get_all_emoji_variants():
+    print("test_get_all_emoji_variants()")
     variants = emojix.get_all_emoji_variants()
-    for i, item in enumerate(variants):
-        print(variants[i]["emoji"])
-    # output:
-    # >>>
-    # ☺️
-    # ☺
-    # 😐
-    # ☹️
-    # ☹
-    # ☠️
-    # ☠
-    # 👽
-    # ❣️
-    # ❣
-    # ❤️
-    # ❤
-    # ...
-
+    if isinstance(variants, list):
+        return True
+    return False
+    
 def test_emoji_to_unicode():
-    print(emojix.emoji_to_unicode("🌊")) # >>> ['U+1F30A']
+    print("test_emoji_to_unicode()")
+    if emojix.emoji_to_unicode("🌊") == ['U+1F30A']:
+        return True
+    return False
 
 def test_emoji_name():
-    print(emojix.emoji_name("🌊")) # >>> :water_wave:
+    print("test_emoji_name()")
+    if emojix.emoji_name("🌊") == ":water_wave:":
+        return True
+    return False
 
 def test_get_emoji_by_name():
+    print("test_get_emoji_by_name()")
     if emojix.get_emoji_by_name("water_wave") == "🌊":
-        return True 
+        return True
+    return False
   
-  
-test_get_emoji_by_name()
-    
+def begin_tests():
+    if test_category_exists():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_category():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_get_all_categories():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_top_level_categories():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_sub_level_categories():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_is_top_level_category():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_parent_category():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_child_categories():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_iterate_category():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_emoji_factory():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_get_emojis_in_category():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_is_emoji_variation():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_get_all_emoji_variants():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_emoji_to_unicode():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_emoji_name():
+        print("Passed")
+    else:
+        print("Failed")
+    if test_get_emoji_by_name():
+        print("Passed")
+    else:
+        print("Failed")
+if __name__ == "__main__":
+    begin_tests()
     
