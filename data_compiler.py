@@ -1,6 +1,6 @@
 # file_parsers.py
 from emoji_data.data_dict import EMOJI_DATA, CATEGORIES, LANGUAGES
-from emoji_data.data_dict_original import ORIGINAL_EMOJI_DATA
+from emoji_data.data_dict_legacy import LEGACY_EMOJI_DATA
 from core import is_emoji
 import xml.etree.ElementTree as ET
 import unicodedata
@@ -618,8 +618,8 @@ def extract_emoji_data():
 
             #current_emoji_name = emj_name.replace("-", "_")
             
-            if current_emoji in ORIGINAL_EMOJI_DATA:
-                current_emoji_name = ORIGINAL_EMOJI_DATA[current_emoji]["en"]
+            if current_emoji in LEGACY_EMOJI_DATA:
+                current_emoji_name = LEGACY_EMOJI_DATA[current_emoji]["en"]
                 
             if current_emoji_name.startswith("_"):
                 current_emoji_name = current_emoji_name.lstrip("_")     
@@ -636,16 +636,16 @@ def extract_emoji_data():
         if current_emoji is not None: 
             
             #//////////// ALIASES //////
-            if current_emoji in ORIGINAL_EMOJI_DATA:
-                if "alias" in ORIGINAL_EMOJI_DATA[current_emoji]:
+            if current_emoji in LEGACY_EMOJI_DATA:
+                if "alias" in LEGACY_EMOJI_DATA[current_emoji]:
                     current_emoji_alias = []
-                    for i in range(len(ORIGINAL_EMOJI_DATA[current_emoji]["alias"])):
-                        current_emoji_alias.append(ORIGINAL_EMOJI_DATA[current_emoji]["alias"][i].lower())
+                    for i in range(len(LEGACY_EMOJI_DATA[current_emoji]["alias"])):
+                        current_emoji_alias.append(LEGACY_EMOJI_DATA[current_emoji]["alias"][i].lower())
 
             #//////////// VARIANT //////
-            if current_emoji in ORIGINAL_EMOJI_DATA:
-                if "variant" in ORIGINAL_EMOJI_DATA[current_emoji]:
-                    is_emoji_variant = ORIGINAL_EMOJI_DATA[current_emoji]["variant"]
+            if current_emoji in LEGACY_EMOJI_DATA:
+                if "variant" in LEGACY_EMOJI_DATA[current_emoji]:
+                    is_emoji_variant = LEGACY_EMOJI_DATA[current_emoji]["variant"]
                 else:
                     is_emoji_variant = False
                     

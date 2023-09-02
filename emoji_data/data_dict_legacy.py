@@ -41,7 +41,7 @@ STATUS = {
     "unqualified": unqualified
 }
 
-ORIGINAL_EMOJI_DATA = {
+LEGACY_EMOJI_DATA = {
     '\U0001F947': {  # 🥇
         'en': ':1st_place_medal:',
         'status': fully_qualified,
