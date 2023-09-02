@@ -1,39 +1,27 @@
-"""
-emoji for Python
-~~~~~~~~~~~~~~~~
 
-emoji terminal output for Python.
-
-    >>> import emoji
-    >>> print(emoji.emojize('Python is :thumbsup:', language='alias'))
-    Python is 👍
-    >>> print(emoji.emojize('Python is :thumbs_up:'))
-    Python is 👍
-"""
-
-
-from emoji.core import *
-from emoji.unicode_codes import *
+from core import *
+from emoji_data import *
 
 __all__ = [
-    # emoji.core
-    'emojize', 'demojize', 'analyze', 'config',
-    'emoji_list', 'distinct_emoji_list', 'emoji_count',
-    'replace_emoji', 'is_emoji', 'purely_emoji', 'version',
-    'Token', 'EmojiMatch', 'EmojiMatchZWJ', 'EmojiMatchZWJNonRGI',
-    # emoji.unicode_codes
+    # emojix.core
+    "category_exists", "category", "get_all_categories", 
+    "top_level_categories", "sub_level_categories", "is_top_level_category", "parent_category", "child_categories", "iterate_category", "emoji_factory", "get_emojis_in_category", "is_emoji_variation", "get_all_emoji_variants", "emoji_to_unicode", "emoji_name", "get_emoji_by_name",
+    "has_zwj", "emojize", "demojize", "analyze", "config",
+    "emoji_list", "distinct_emoji_list", "emoji_count",
+    "replace_emoji", "is_emoji", "purely_emoji", "version",
+    # emojix.tokenize
+    "Token", "EmojiMatch", "EmojiMatchZWJ", "EmojiMatchZWJNonRGI",
     'EMOJI_DATA', 'STATUS', 'LANGUAGES',
 ]
 
-__version__ = '2.8.0'
-__author__ = 'Taehoon Kim, Kevin Wurster'
-__email__ = 'carpedm20@gmail.com'
-# and wursterk@gmail.com, tahir.jalilov@gmail.com
-__source__ = 'https://github.com/carpedm20/emoji/'
+__version__ = '1.0.0'
+__author__ = 'Paul McCarthy'
+__email__ = 'paulmccarthy676@gmail.com'
+__source__ = 'https://github.com/happycod3r/emojix'
 __license__ = '''
 New BSD License
 
-Copyright (c) 2014-2023, Taehoon Kim, Kevin Wurster
+Copyright (c) 2223, Paul McCarthy
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

@@ -1,8 +1,9 @@
-from emoji.unicode_codes.data_dict import *
-
+from emoji_data.data_dict import *
+from emoji_data.data_dict_retrieval import *
 __all__ = [
-    'get_emoji_unicode_dict', 'get_aliases_unicode_dict',
-    'EMOJI_DATA', 'STATUS', 'LANGUAGES'
+    "get_emoji_data_for_lang", "get_emoji_aliases_data", "get_categories_data",
+    "categories_key_chain", "emoji_data", "key_chain", "get_emoji_unicode_dict", "get_aliases_unicode_dict", "get_emoji",
+    "EMOJI_DATA", "STATUS", "LANGUAGES", "CATEGORIES", "BASIC_EMOJIS"
 ]
 
 

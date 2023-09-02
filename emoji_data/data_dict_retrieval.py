@@ -1,15 +1,17 @@
-from emoji_data.data_dict import EMOJI_DATA, CATEGORIES, LANGUAGES, STATUS
+from data_dict import CATEGORIES, EMOJI_DATA, BASIC_EMOJIS, LANGUAGES, STATUS
+from typing import Dict, List, Any
 
 __all__ = [
-    'generate_emoji_data_for_lang', 'generate_emoji_aliases_dict',
-    'EMOJI_DATA', 'STATUS', 'LANGUAGES', 'CATEGORIES'
+    "get_emoji_data_for_lang", "get_emoji_aliases_data", "get_categories_data",
+    "categories_key_chain", "emoji_data", "key_chain", "EMOJI_DATA", "STATUS", 
+    "LANGUAGES", "CATEGORIES", "BASIC_EMOJIS"
 ]
 
 _EMOJI_LANG_CACHE = {lang: None for lang in LANGUAGES}  # Cache for the language dicts
 
 _EMOJI_ALIASES_CACHE = {}  # Cache for the aliases dict
 
-def get_emoji_data_for_lang(lang) -> dict:
+def get_emoji_data_for_lang(lang) -> Dict:
     """Generate dict containing all fully-qualified and component emoji name for a language
     The dict is only generated once per language and then cached in _EMOJI_LANG_CACHE[lang]"""
 
@@ -19,7 +21,7 @@ def get_emoji_data_for_lang(lang) -> dict:
 
     return _EMOJI_LANG_CACHE[lang]
 
-def get_emoji_aliases_data() -> dict:
+def get_emoji_aliases_data() -> Dict:
     """Generate dict containing all fully-qualified and component aliases
     The dict is only generated once and then cached in _EMOJI_ALIASES_CACHE"""
 
@@ -32,7 +34,7 @@ def get_emoji_aliases_data() -> dict:
 
     return _EMOJI_ALIASES_CACHE
 
-def get_categories_data() -> dict:
+def get_categories_data() -> Dict:
     categories = []
     unique_categories = []
     categories_dict = {}
@@ -59,11 +61,11 @@ def get_categories_data() -> dict:
             index = index + 1            
     return categories_dict
 
-def categories_key_chain():
+def categories_key_chain() -> Dict[Dict[str, int]]:
     return CATEGORIES.keys()
 
-def emoji_data() -> dict:
+def emoji_data() -> Dict[Dict[str, int, Any]]:
     return EMOJI_DATA
 
-def key_chain() -> dict:
+def key_chain() -> Dict[Dict[str, Any]]:
     return EMOJI_DATA.keys()

@@ -82,7 +82,7 @@ def category_exists(category: str=None, category_id: int=None) -> bool:
             return True
     return False
 
-def category(emoji: str) -> (dict | List[Dict] | None):
+def category(emoji: str) -> (Dict | List[Dict] | None):
     categories = []
     for i in range(len(emoji)):
         if is_emoji(emoji):                    

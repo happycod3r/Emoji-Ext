@@ -6,16 +6,12 @@ Components for detecting and tokenizing emoji in strings.
 
 """
 from typing import NamedTuple, Dict, Union, Iterator, Any
-import emoji_data.data_dict as unicode_codes
-
+from emoji_data.data_dict import EMOJI_DATA, STATUS
 
 __all__ = [
     'EmojiMatch', 'EmojiMatchZWJ', 'EmojiMatchZWJNonRGI', 'Token',
     'tokenize', 'filter_tokens',
 ]
-_REPLACEMENT_CHARACTER = 'U+FFFD' # '�'  
-_VARIATION_SELECTOR_16 = '️' # Used to specify a particular glyph variation for a base character
-_ZWJ_CODEPOINT='U+200D' # Unicode code point for the Zero Width Joiner
 _ZWJ = '\u200D'
 _SEARCH_TREE = None
 
@@ -97,7 +93,7 @@ class EmojiMatchZWJ(EmojiMatch):
         index = match.start
         for e in match.emoji.split(_ZWJ):
             _match = EmojiMatch(
-                e, index, index+len(e), unicode_codes.EMOJI_DATA.get(e, None))
+                e, index, index+len(e), EMOJI_DATA.get(e, None))
             self.emojis.append(_match)
             index += len(e) + 1
 
@@ -163,7 +159,6 @@ def tokenize(string, keep_zwj: bool) -> Iterator[Token]:
     """
 
     tree = get_search_tree()
-    EMOJI_DATA = unicode_codes.EMOJI_DATA
     # result: [ Token(oldsubstring0, EmojiMatch), Token(char1, char1), ... ]
     result = []
     i = 0
@@ -202,7 +197,7 @@ def tokenize(string, keep_zwj: bool) -> Iterator[Token]:
         elif char == _ZWJ and result and result[-1].chars in EMOJI_DATA and i > 0 and string[i - 1] in tree:
             # the current char is ZWJ and the last match was an emoji
             ignore.append(i)
-            if EMOJI_DATA[result[-1].chars]["status"] == unicode_codes.STATUS["component"]:
+            if EMOJI_DATA[result[-1].chars]["status"] == STATUS["component"]:
                 # last match was a component, it could be ZWJ+EMOJI+COMPONENT
                 # or ZWJ+COMPONENT
                 i = i - sum(len(t.chars) for t in result[-2:])
@@ -343,7 +338,7 @@ def get_search_tree() -> Dict[str, Any]:
     global _SEARCH_TREE
     if _SEARCH_TREE is None:
         _SEARCH_TREE = {}
-        for emj in unicode_codes.EMOJI_DATA:
+        for emj in EMOJI_DATA:
             sub_tree = _SEARCH_TREE
             lastidx = len(emj) - 1
             for i, char in enumerate(emj):
@@ -351,5 +346,5 @@ def get_search_tree() -> Dict[str, Any]:
                     sub_tree[char] = {}
                 sub_tree = sub_tree[char]
                 if i == lastidx:
-                    sub_tree['data'] = unicode_codes.EMOJI_DATA[emj]
+                    sub_tree['data'] = EMOJI_DATA[emj]
     return _SEARCH_TREE

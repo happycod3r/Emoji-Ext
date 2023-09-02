@@ -797,7 +797,7 @@ points.
 \"\"\"
 
 __all__ = [
-    'STATUS' , 'LANGUAGES', 'EMOJI_DATA', 'BASIC_EMOJIS'
+    'STATUS", "LANGUAGES", "EMOJI_DATA", "BASIC_EMOJIS", "CATEGRORIES"
 ]             
 
 component = 1
