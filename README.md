@@ -7,14 +7,14 @@
 
 ### [Emoji-X Methods](#emoji_x_methods)
 
-- [category_exists()](#category_exists) - Checks whether or not the specified category exists.
+- [category_exists()](#category_exists) - Checks whether or not the specified emoji category exists.
 - [category()](#category) - Gets the category of an emoji.
 - [get_all_categories()](#get_all_categories) - Returns a dict of all emoji categories.
-- [top_level_categories()](#top_level_categories) - Returns a list of top level categories.
-- [sub_level_categories()](#sub_level_categories) - Returns a list of sub level categories.
+- [top_level_categories()](#top_level_categories) - Returns a list of top level emoji categories.
+- [sub_level_categories()](#sub_level_categories) - Returns a list of sub level emoji categories.
 - [is_top_level_category()](#is_top_level_category) - Returns whether or not an emoji category is a top level category.
-- [parent_category()](#parent_category) - Returns the parent category of a category.
-- [child_categories()](#child_categories) - Returns a list of child categories of a top level category.
+- [parent_category()](#parent_category) - Returns the parent category of an emoji category.
+- [child_categories()](#child_categories) - Returns a list of child categories of a top level emoji category.
 - [iterate_category()](#iterate_category) - Iterate through a category of emojis and call func on each item.
 - [emoji_factory()](#emoji_factory) - A generator which yields each emoji of a given category.
 - [get_emojis_in_category()](#get_emojis_in_category) - Returns a list of emojis in a category.
@@ -36,5 +36,5 @@
 - [distinct_emoji_list()](#distinct_emoji_list) - Returns a list of unique emojis in a given string or text.
 - [emoji_count()](#emoji_count) - Returns the number of emojis in a given string.
 - [is_emoji()](#is_emoji) - Returns true if the given string is an emoji, otherwise false.
-- [purely_emoji()](#purely_emoji) - Returns
+- [purely_emoji()](#purely_emoji) - Returns True if the given string contains only emojis, otherwise false.
 - [version()](#version) - Returns the version of an emoji.
