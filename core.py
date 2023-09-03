@@ -8,7 +8,7 @@ Core components for emojix derived from https://www.github.com/carpedm20/emoji.
 
 import re
 import unicodedata
-from typing import Any, Text, Dict, Tuple, List, Iterator
+from typing import Any, Dict, List, Iterator
 from tokenizer import Token, EmojiMatch, EmojiMatchZWJ, EmojiMatchZWJNonRGI, tokenize, filter_tokens
 from emoji_data.data_dict_retrieval import _EMOJI_ALIASES_CACHE, _EMOJI_LANG_CACHE, emoji_data, key_chain, categories_key_chain, get_emoji_aliases_data, get_emoji_data_for_lang
 from emoji_data.data_dict import EMOJI_DATA, CATEGORIES, LANGUAGES, STATUS
@@ -20,7 +20,8 @@ __all__ = [
     "get_all_emoji_variants", "emoji_to_unicode", "emoji_name", "get_emoji_by_name",
     "has_zwj", "emojize", "demojize", "replace_emoji", "emoji_list", "distinct_emoji_list",
     "emoji_count", "is_emoji", "purely_emoji", "version", "has_alias", "alias"
-    "Token", "EmojiMatch", "EmojiMatchZWJ", "EmojiMatchZWJNonRGI",
+    "Token", "EmojiMatch", "EmojiMatchZWJ", "EmojiMatchZWJNonRGI", "KEYCHAIN", "CATS_KEYCHAIN", "emoji_data", "key_chain", "categories_key_chain", 
+    "get_emoji_aliases_data", "get_emoji_data_for_lang" 
 ]
 
 _DEFAULT_DELIMITER = ':'
@@ -238,6 +239,9 @@ def emoji_factory(category: str=None, category_id: int=None) -> (str | None):
                 yield KEY
             if KEY["subcategory"] == category:
                 yield KEY
+    if category is None and category_id is None:
+        for key in KEYCHAIN:
+            yield key
     return None
 
 def get_emojis_in_category(category: str=None, category_id: int=None) -> List[str]:

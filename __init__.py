@@ -1,9 +1,10 @@
 
 from core import *
 from emoji_data import *
-
+from emoji_data.data_dict_retrieval import *
 __all__ = [
     # emojix.core
+    "KEYCHAIN", "CATS_KEYCHAIN",
     "category_exists", "category", "get_all_categories", 
     "top_level_categories", "sub_level_categories", "is_top_level_category", "parent_category", "child_categories", "iterate_category", "emoji_factory", "get_emojis_in_category", "is_emoji_variation", "get_all_emoji_variants", "emoji_to_unicode", "emoji_name", "get_emoji_by_name",
     "has_zwj", "emojize", "demojize", "analyze", "config",
@@ -11,7 +12,10 @@ __all__ = [
     "replace_emoji", "is_emoji", "purely_emoji", "version",
     # emojix.tokenize
     "Token", "EmojiMatch", "EmojiMatchZWJ", "EmojiMatchZWJNonRGI",
-    'EMOJI_DATA', 'STATUS', 'LANGUAGES',
+    "EMOJI_DATA", "STATUS", "LANGUAGES", "CATEGORIES", "BASIC_EMOJIS"
+    # emojix.emoji_data.data_dict_retrieval
+    "key_chain", "categories_key_chain", "emoji_data", "get_emoji_data_for_lang",
+    "get_categories_data", "get_emoji_aliases_for_lang"
 ]
 
 __version__ = '1.0.0'

@@ -1,6 +1,6 @@
 # file_parsers.py
-from emoji_data.data_dict import EMOJI_DATA, CATEGORIES, LANGUAGES
-from emoji_data.data_dict_legacy import LEGACY_EMOJI_DATA
+from data_dict import EMOJI_DATA, CATEGORIES, LANGUAGES
+from data_dict_legacy import LEGACY_EMOJI_DATA
 from core import is_emoji
 import xml.etree.ElementTree as ET
 import unicodedata
@@ -8,6 +8,8 @@ import requests
 import bs4
 import os
 import re
+
+__all__ = ["compile_data_dict"]
 
 def _get_text_from_url(url: str) -> str:
     """Get text from url"""
@@ -410,8 +412,6 @@ def find_github_aliases(emj, github_dict, v, emj_no_variant=None):
             aliases.add(gh_alias)
 
     return aliases
-
-##############################################################
 
 _CURRENT_PATH = os.path.dirname(os.path.realpath(__file__))
 GITHUB_REMOVED_CHARS = re.compile("\u200D|\uFE0F|\uFE0E", re.IGNORECASE)
